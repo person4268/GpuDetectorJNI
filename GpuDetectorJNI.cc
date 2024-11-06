@@ -85,7 +85,7 @@ apriltag_detector_t *maketagdetector(apriltag_family_t *tag_family) {
 
 static jobject MakeJObject(JNIEnv* env, const apriltag_detection_t* detect) {
   static jmethodID constructor = env->GetMethodID(
-      detectionCls, "<init>", "(ljava/lang/string;iif[ddd[d)v");
+      detectionCls, "<init>", "(Ljava/lang/String;IIF[DDD[D)V");
   if (!constructor) {
     return nullptr;
   }
@@ -133,7 +133,7 @@ static jobjectArray MakeJObject(JNIEnv* env, const zarray_t *detections) {
 
 extern "C" {
 
-JNIEXPORT jint JNICALL jni_onload(JavaVM* vm, void* reserved) {
+JNIEXPORT jint JNICALL JNI_Onload(JavaVM* vm, void* reserved) {
   jvm = vm;
 
   JNIEnv* env;
@@ -161,7 +161,7 @@ JNIEXPORT jint JNICALL jni_onload(JavaVM* vm, void* reserved) {
   return JNI_VERSION_1_6;
 }
 
-JNIEXPORT void JNICALL jni_onunload(JavaVM* vm, void* reserved) {
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved) {
   JNIEnv* env;
   if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
     return;
@@ -177,7 +177,7 @@ JNIEXPORT void JNICALL jni_onunload(JavaVM* vm, void* reserved) {
 }
 
 JNIEXPORT jlong JNICALL
-java_org_photonvision_jni_gpudetectorjni_creategpudetector(JNIEnv * jenv, jobject jobj, jint width, jint height) {
+Java_org_photonvision_jni_GpuDetectorJNI_createGpuDetector(JNIEnv * jenv, jobject jobj, jint width, jint height) {
     std::cout << "creategpudetector " << width << "x" << height << std::endl;
 
     if (maxdetectors > 9) {
@@ -208,7 +208,7 @@ java_org_photonvision_jni_gpudetectorjni_creategpudetector(JNIEnv * jenv, jobjec
 }
 
 JNIEXPORT void JNICALL
-java_org_photonvision_jni_gpudetectorjni_setparams(JNIEnv * jenv, jobject jobj, jlong handle, jdouble fx, jdouble cx, jdouble fy, jdouble cy, jdouble k1, jdouble k2, jdouble p1, jdouble p2, jdouble k3) {
+Java_org_photonvision_jni_GpuDetectorJNI_setparams(JNIEnv * jenv, jobject jobj, jlong handle, jdouble fx, jdouble cx, jdouble fy, jdouble cy, jdouble k1, jdouble k2, jdouble p1, jdouble p2, jdouble k3) {
     std::cout << "setparams" << std::endl;
     if(!detectors[handle].gpu_detector_) {
         std::cout << "971 library lost gpu_detector ptr setparams" << std::endl;
@@ -225,7 +225,7 @@ java_org_photonvision_jni_gpudetectorjni_setparams(JNIEnv * jenv, jobject jobj, 
 }
 
 JNIEXPORT void JNICALL
-java_org_photonvision_jni_gpudetectorjni_destroygpudetector(JNIEnv * jenv, jobject jobj, jlong handle) {
+Java_org_photonvision_jni_GpuDetectorJNI_destroyGpuDetector(JNIEnv * jenv, jobject jobj, jlong handle) {
     std::cout << "destroygpudetector" << std::endl;
     delete(detectors[handle].gpu_detector_);
     detectors[handle].gpu_detector_ = nullptr;
@@ -234,7 +234,7 @@ java_org_photonvision_jni_gpudetectorjni_destroygpudetector(JNIEnv * jenv, jobje
 }
 
 JNIEXPORT jobjectArray JNICALL
-java_org_photonvision_jni_gpudetectorjni_processimage(JNIEnv * jenv, jobject jobj, jlong handle, jlong p) {
+Java_org_photonvision_jni_GpuDetectorJNI_processimage(JNIEnv * jenv, jobject jobj, jlong handle, jlong p) {
 	if(!p) {
              std::cout << "971 library got a zero pointer" << std::endl;
 	     return nullptr;
