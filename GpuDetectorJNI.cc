@@ -11,27 +11,11 @@
 static JavaVM* jvm = nullptr;
 
 static wpi::java::JClass detectionCls;
-//static wpi::java::JClass detectorConfigCls;
-//static wpi::java::JClass detectorQTPCls;
-//static wpi::java::JClass poseEstimateCls;
-//static wpi::java::JClass quaternionCls;
-//static wpi::java::JClass rotation3dCls;
-//static wpi::java::JClass transform3dCls;
-//static wpi::java::JClass translation3dCls;
-//static wpi::java::JClass rawFrameCls;
 static wpi::java::JException illegalArgEx;
 static wpi::java::JException nullPointerEx;
 
 static const wpi::java::JClassInit classes[] = {
-    {"edu/wpi/first/apriltag/AprilTagDetection", &detectionCls}}; //,
-    //{"edu/wpi/first/apriltag/AprilTagDetector$Config", &detectorConfigCls},
-    //{"edu/wpi/first/apriltag/AprilTagDetector$QuadThresholdParameters", &detectorQTPCls},
-    //{"edu/wpi/first/apriltag/AprilTagPoseEstimate", &poseEstimateCls},
-    //{"edu/wpi/first/math/geometry/Quaternion", &quaternionCls},
-    //{"edu/wpi/first/math/geometry/Rotation3d", &rotation3dCls},
-    //{"edu/wpi/first/math/geometry/Transform3d", &transform3dCls},
-    //{"edu/wpi/first/math/geometry/Translation3d", &translation3dCls},
-    //{"edu/wpi/first/util/RawFrame", &rawFrameCls}};
+    {"edu/wpi/first/apriltag/AprilTagDetection", &detectionCls}};
 
 static const wpi::java::JExceptionInit exceptions[] = {
     {"java/lang/IllegalArgumentException", &illegalArgEx},
@@ -133,7 +117,7 @@ static jobjectArray MakeJObject(JNIEnv* env, const zarray_t *detections) {
 
 extern "C" {
 
-JNIEXPORT jint JNICALL JNI_Onload(JavaVM* vm, void* reserved) {
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
   jvm = vm;
 
   JNIEnv* env;
@@ -195,16 +179,6 @@ Java_org_photonvision_jni_GpuDetectorJNI_createGpuDetector(JNIEnv * jenv, jobjec
 
     detectors[maxdetectors] = detector;
     return maxdetectors++;
-    
-    /*if(!apriltag_detector_) 
-        apriltag_detector_ = maketagdetector(tag36h11_create());
-    if(gpu_detector_ && width == gpu_detector_->width() && height == gpu_detector_->height()) return;
-    std::cout << "create new gpudetector" << std::endl;
-    delete(gpu_detector_);
-    gpu_detector_ = new frc971::apriltag::gpudetector(width, height, 
-	    apriltag_detector_, 
-	    create_camera_matrix(), create_distortion_coefficients());
-    std::cout << "created new gpudetector" << std::endl; */
 }
 
 JNIEXPORT void JNICALL
@@ -216,7 +190,9 @@ Java_org_photonvision_jni_GpuDetectorJNI_setparams(JNIEnv * jenv, jobject jobj, 
     }
     int cols = detectors[handle].gpu_detector_->width();
     int rows =  detectors[handle].gpu_detector_->height();
-    detectors[handle].camera_matrix = frc971::apriltag::CameraMatrix{fx, cy, fy, cy};
+    std::cout << "fx " << fx << " cx " << cx << " fy " << fy << " cy " << cy << std::endl;
+    std::cout << "k1 " << k1 << " k2 " << k2 << " p1 " << p1 << " p2 " << p2 << " k3 " << k3 << std::endl;
+    detectors[handle].camera_matrix = frc971::apriltag::CameraMatrix{fx, cx, fy, cy};
     detectors[handle].dist_coeffs = frc971::apriltag::DistCoeffs{ k1, k2, p1, p2, k3};
     delete(detectors[handle].gpu_detector_);
     detectors[handle].gpu_detector_ = new frc971::apriltag::GpuDetector(cols, rows, 
@@ -227,6 +203,10 @@ Java_org_photonvision_jni_GpuDetectorJNI_setparams(JNIEnv * jenv, jobject jobj, 
 JNIEXPORT void JNICALL
 Java_org_photonvision_jni_GpuDetectorJNI_destroyGpuDetector(JNIEnv * jenv, jobject jobj, jlong handle) {
     std::cout << "destroygpudetector" << std::endl;
+    if(!detectors[handle].gpu_detector_) {
+        std::cout << "971 library lost gpu_detector ptr" << std::endl;
+        return;
+    }
     delete(detectors[handle].gpu_detector_);
     detectors[handle].gpu_detector_ = nullptr;
     delete(detectors[handle].apriltag_detector_);
@@ -260,7 +240,7 @@ Java_org_photonvision_jni_GpuDetectorJNI_processimage(JNIEnv * jenv, jobject job
         const zarray_t *detections = detectors[handle].gpu_detector_->Detections();
         if( zarray_size(detections))
         for (int i = 0; i < zarray_size(detections); ++i) {
-             std::cout << "971 library has " << zarray_size(detections) << " detections" << std::endl;
+             //std::cout << "971 library has " << zarray_size(detections) << " detections" << std::endl;
              apriltag_detection_t *gpu_detection;
              zarray_get(detections, i, &gpu_detection);
              std::cout << "tag: " << gpu_detection->id << " at " <<
