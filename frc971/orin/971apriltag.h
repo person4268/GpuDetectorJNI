@@ -1,6 +1,6 @@
 #pragma once
 
-#include "third_party/apriltag/apriltag.h"
+#include "apriltag.h"
 
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
