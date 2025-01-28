@@ -21,7 +21,7 @@ frc971::apriltag::DistCoeffs distortion {
 };
 
 int main(int argc, char **argv) {
-  size_t decimate = 2;
+  size_t decimate = 1;
 
   cv::Mat image;
   if(argc < 2) goto funny; // intentionally bad code

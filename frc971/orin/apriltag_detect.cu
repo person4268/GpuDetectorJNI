@@ -115,12 +115,12 @@ void GpuDetector::UpdateFitQuads() {
       double err;
       double mse;
       HostFitLine(quad.moments[i], lines[i], lines[i] + 2, &err, &mse);
-      /*if (print) {
-        LOG(INFO) << "Blob " << corners.blob_index << " mse -> " << mse
+      if (print) {
+        std::cout << "Blob " << corners.blob_index << " mse -> " << mse
                   << " err " << err << " index " << quad.indices[i] << ", "
                   << quad.indices[(i + 1) % 4];
-        LOG(INFO) << "   " << quad.moments[i];
-      }*/
+        std::cout << "   " << quad.moments[i];
+      }
     }
 
     bool bad_determinant = false;
@@ -161,7 +161,7 @@ void GpuDetector::UpdateFitQuads() {
       corners.corners[i][0] = lines[i][0] + L0 * A00;
       corners.corners[i][1] = lines[i][1] + L0 * A10;
       if (print) {
-        /*LOG(INFO) << "Calculated corner[" << i << "] -> ("
+        /*std::cout << "Calculated corner[" << i << "] -> ("
                   << std::setprecision(20) << corners.corners[i][0] << ", "
                   << std::setprecision(20) << corners.corners[i][1] << ")";*/
       }
@@ -201,8 +201,8 @@ void GpuDetector::UpdateFitQuads() {
 
       if (area < 0.95 * min_tag_width_ * min_tag_width_) {
         if (print) {
-          /*LOG(INFO) << "Area of " << area << " smaller than "
-                    << 0.95 * min_tag_width_ * min_tag_width_;*/
+          std::cout << "Area of " << area << " smaller than "
+                    << 0.95 * min_tag_width_ * min_tag_width_;
         }
         continue;
       }
@@ -223,7 +223,7 @@ void GpuDetector::UpdateFitQuads() {
             sqrtf((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2));
 
         if (print) {
-          /*LOG(INFO) << "Cosdtheta -> for " << i0 << " " << i1 << " " << i2
+          /*std::cout << "Cosdtheta -> for " << i0 << " " << i1 << " " << i2
                     << " -> " << cos_dtheta << " threshold "
                     << tag_detector_->qtp.cos_critical_rad;*/
         }
