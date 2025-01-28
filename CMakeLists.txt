@@ -15,7 +15,7 @@ endif()
 
 set(CMAKE_CUDA_FLAGS "--expt-relaxed-constexpr")
 
-set(CMAKE_BUILD_TYPE DEBUG)
+# set(CMAKE_BUILD_TYPE DEBUG)
 
 add_subdirectory(third_party/apriltag EXCLUDE_FROM_ALL)
 

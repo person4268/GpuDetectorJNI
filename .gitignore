@@ -1,2 +1,4 @@
 third_party/apriltag/build
 build
+thresholded.png
+output.png
