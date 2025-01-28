@@ -23,7 +23,7 @@ frc971::apriltag::DistCoeffs distortion {
 
 int main(int argc, char **argv) {
   size_t decimate = 1;
-  bool debug = false;
+  bool debug = true;
 
   cv::Mat image;
   if(argc < 2) goto funny; // intentionally bad code
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
       detector.CopyThresholdedTo(tresholded.ptr());
       cv::imwrite("thresholded.png", tresholded);
     
-      auto fitQuads = detector.CopyFitQuads();
+      auto fitQuads = detector.FitQuads();
       std::cout << fitQuads.size() << " fit quads" << std::endl;
     }
 
