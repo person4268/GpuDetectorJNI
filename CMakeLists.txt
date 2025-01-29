@@ -25,17 +25,29 @@ find_package(CUDAToolkit REQUIRED)
 #find_package(Eigen3 REQUIRED)
 add_compile_options(-Wno-psabi)
 
-include_directories( . third_party/apriltag/include ${CUDAToolkit_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
-
-add_executable(971apriltag 
-	frc971/orin/971apriltag.cu
+set(971TAG_SOURCES
+  frc971/orin/971apriltag.cu
   frc971/orin/apriltag_detect.cu
   frc971/orin/labeling_allegretti_2019_BKE.cu
   frc971/orin/line_fit_filter.cu
   frc971/orin/points.cu
   frc971/orin/threshold.cu
   frc971/orin/cuda.cc
-	main.cpp
 )
 
-target_link_libraries(971apriltag ${OpenCV_LIBS} apriltag CUDA::cudart)
+add_library(971apriltag_lib STATIC
+  ${971TAG_SOURCES}
+)
+
+target_include_directories(971apriltag_lib PUBLIC . third_party/apriltag/ ${CUDAToolkit_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+
+add_executable(971apriltag 
+  main.cpp
+)
+
+add_executable(camera
+  camera.cpp
+)
+
+target_link_libraries(971apriltag 971apriltag_lib ${OpenCV_LIBS} apriltag CUDA::cudart)
+target_link_libraries(camera 971apriltag_lib ${OpenCV_LIBS} apriltag CUDA::cudart)
