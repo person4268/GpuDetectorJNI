@@ -4,3 +4,5 @@ This is 971's cuda apriltag library extracted into a standalone application (jni
 
 Two binaries are produced: main and camera. The former takes in images while the latter takes in a camera stream.
 They're pretty crude and don't take any arguments (except for main taking in the image file as its only argument), so edit source code to change settings.
+
+IIRC, the detector will silently fail to detect certain regions in images >1MP, and will throw an assert for images with more than 1>>22 pixels.
